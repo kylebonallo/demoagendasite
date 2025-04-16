@@ -1,5 +1,14 @@
 document.addEventListener("DOMContentLoaded", () => {
     const agendaList = document.getElementById("agenda-list");
+    const progressBarInner = document.createElement("div");
+    progressBarInner.className = "progress-bar-inner";
+
+    const progressBar = document.createElement("div");
+    progressBar.className = "progress-bar";
+    progressBar.appendChild(progressBarInner);
+
+    agendaList.parentElement.insertBefore(progressBar, agendaList);
+
     const agendaItems = [
         "Chatroulette",
         "AI Tools - a chance to share experiences or what tools we've been using or learning about (Cursor, VS Code Agent mode, Github CoPilot, etc)",
@@ -11,17 +20,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
     agendaItems.forEach(item => {
         const listItem = document.createElement("li");
-        const checkbox = document.createElement("input");
-        checkbox.type = "checkbox";
-        listItem.appendChild(checkbox);
-        listItem.appendChild(document.createTextNode(item));
+        listItem.textContent = item;
+        listItem.addEventListener("click", () => {
+            listItem.style.backgroundColor = listItem.style.backgroundColor === "green" ? "white" : "green";
+            updateProgressBar();
+        });
         agendaList.appendChild(listItem);
     });
 
-    agendaList.addEventListener("change", (event) => {
-        if (event.target.type === "checkbox") {
-            const listItem = event.target.parentElement;
-            listItem.style.backgroundColor = event.target.checked ? "blue" : "white";
-        }
-    });
+    function updateProgressBar() {
+        const totalItems = agendaList.children.length;
+        const completedItems = Array.from(agendaList.children).filter(item => item.style.backgroundColor === "green").length;
+        const progress = (completedItems / totalItems) * 100;
+        progressBarInner.style.width = `${progress}%`;
+    }
 });
